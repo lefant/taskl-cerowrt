@@ -25,6 +25,29 @@ function //cerowrt {
   : This task had no commands.
 }
 
+function //opkg {
+  local -a ___=( "$@" )
+  run opkg install "$@"
+}
+
+function //opkg.up {
+  local -a ___=( "$@" )
+  run opkg update
+}
+
+function //qos {
+  local -a ___=( "$@" )
+  { [[ ${1:+true} ]] &&
+    { local download="$1"
+      shift ;} ;} ||
+  local download=100000
+  { [[ ${1:+true} ]] &&
+    { local upload="$1"
+      shift ;} ;} ||
+  local upload=10000
+  run uci commit qos
+}
+
 function //system {
   local -a ___=( "$@" )
   { [[ ${1:+true} ]] &&
@@ -41,6 +64,19 @@ function //uci.set {
   local value="$1"
   shift
   run uci set "$key"$'='"$value"
+}
+
+function //uci.set.qos {
+  local -a ___=( "$@" )
+  local download="$1"
+  shift
+  local upload="$1"
+  shift
+  { [[ ${1:+true} ]] &&
+    { local iface="$1"
+      shift ;} ;} ||
+  local iface=ge00
+  : This task had no commands.
 }
 
 function //uci.set.wireless {
@@ -86,32 +122,32 @@ function tasks {
   enter 00
   enter 01
   enter 02
+  enter 03
+  enter 04
+  try 04
+  leave 04
+  try 03
+  leave 03
+  enter 05
+  try 05
+  leave 05
+  enter 06
+  try 06
+  leave 06
+  enter 07
+  try 07
+  leave 07
   try 02
   leave 02
   try 01
   leave 01
-  enter 03
-  enter 04
-  enter 05
-  enter 06
-  try 06
-  leave 06
-  try 05
-  leave 05
-  enter 07
   enter 08
-  try 08
-  leave 08
-  try 07
-  leave 07
   enter 09
-  enter 10
-  try 10
-  leave 10
   try 09
   leave 09
-  try 04
-  leave 04
+  try 08
+  leave 08
+  enter 10
   enter 11
   enter 12
   enter 13
@@ -175,118 +211,157 @@ function tasks {
   leave 30
   try 25
   leave 25
-  try 03
-  leave 03
+  enter 32
+  enter 33
+  enter 34
+  try 34
+  leave 34
+  try 33
+  leave 33
+  enter 35
+  enter 36
+  try 36
+  leave 36
+  try 35
+  leave 35
+  enter 37
+  enter 38
+  try 38
+  leave 38
+  try 37
+  leave 37
+  try 32
+  leave 32
+  try 10
+  leave 10
   try 00
   leave 00
 }
 
 argv00=( //cerowrt )
-argv01=( //system
+argv03=( //opkg
+         qos-scripts )
+argv04=( //opkg.up )
+argv01=( //qos
+         100000
+         10000 )
+argv08=( //system
          CEROwrt )
-argv02=( //uci.set
+argv05=( //uci.set
+         qos.ge00.download
+         100000 )
+argv06=( //uci.set
+         qos.ge00.enabled
+         1 )
+argv07=( //uci.set
+         qos.ge00.upload
+         10000 )
+argv09=( //uci.set
          system.hostname
          CEROwrt )
-argv06=( //uci.set
+argv13=( //uci.set
          $'wireless.@wifi-iface[0].encryption'
          psk2 )
-argv08=( //uci.set
+argv15=( //uci.set
          $'wireless.@wifi-iface[0].key'
          Beatthebloat )
-argv10=( //uci.set
+argv17=( //uci.set
          $'wireless.@wifi-iface[0].ssid'
          CEROwrt )
-argv13=( //uci.set
+argv20=( //uci.set
          $'wireless.@wifi-iface[1].encryption'
          psk2 )
-argv15=( //uci.set
+argv22=( //uci.set
          $'wireless.@wifi-iface[1].key'
          Beatthebloat )
-argv17=( //uci.set
+argv24=( //uci.set
          $'wireless.@wifi-iface[1].ssid'
          CEROwrt-guest )
-argv20=( //uci.set
+argv27=( //uci.set
          $'wireless.@wifi-iface[3].encryption'
          psk2 )
-argv22=( //uci.set
+argv29=( //uci.set
          $'wireless.@wifi-iface[3].key'
          Beatthebloat )
-argv24=( //uci.set
+argv31=( //uci.set
          $'wireless.@wifi-iface[3].ssid'
          CEROwrt5 )
-argv27=( //uci.set
+argv34=( //uci.set
          $'wireless.@wifi-iface[4].encryption'
          psk2 )
-argv29=( //uci.set
+argv36=( //uci.set
          $'wireless.@wifi-iface[4].key'
          Beatthebloat )
-argv31=( //uci.set
+argv38=( //uci.set
          $'wireless.@wifi-iface[4].ssid'
          CEROwrt-guest5 )
-argv05=( //uci.set.wireless
-         0
-         encryption
-         psk2 )
-argv07=( //uci.set.wireless
-         0
-         key
-         Beatthebloat )
-argv09=( //uci.set.wireless
-         0
-         ssid
-         CEROwrt )
+argv02=( //uci.set.qos
+         100000
+         10000 )
 argv12=( //uci.set.wireless
-         1
+         0
          encryption
          psk2 )
 argv14=( //uci.set.wireless
-         1
+         0
          key
          Beatthebloat )
 argv16=( //uci.set.wireless
-         1
+         0
          ssid
-         CEROwrt-guest )
+         CEROwrt )
 argv19=( //uci.set.wireless
-         3
+         1
          encryption
          psk2 )
 argv21=( //uci.set.wireless
-         3
+         1
          key
          Beatthebloat )
 argv23=( //uci.set.wireless
-         3
+         1
          ssid
-         CEROwrt5 )
+         CEROwrt-guest )
 argv26=( //uci.set.wireless
-         4
+         3
          encryption
          psk2 )
 argv28=( //uci.set.wireless
-         4
+         3
          key
          Beatthebloat )
 argv30=( //uci.set.wireless
+         3
+         ssid
+         CEROwrt5 )
+argv33=( //uci.set.wireless
+         4
+         encryption
+         psk2 )
+argv35=( //uci.set.wireless
+         4
+         key
+         Beatthebloat )
+argv37=( //uci.set.wireless
          4
          ssid
          CEROwrt-guest5 )
-argv03=( //wireless
-         CEROwrt
-         Beatthebloat )
-argv04=( //wireless.iface
-         0
+argv10=( //wireless
          CEROwrt
          Beatthebloat )
 argv11=( //wireless.iface
+         0
+         CEROwrt
+         Beatthebloat )
+argv18=( //wireless.iface
          1
          CEROwrt-guest
          Beatthebloat )
-argv18=( //wireless.iface
+argv25=( //wireless.iface
          3
          CEROwrt5
          Beatthebloat )
-argv25=( //wireless.iface
+argv32=( //wireless.iface
          4
          CEROwrt-guest5
          Beatthebloat )
