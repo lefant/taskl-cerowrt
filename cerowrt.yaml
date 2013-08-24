@@ -1,7 +1,7 @@
 //cerowrt:
   deps:
-  - //system:
-  - //wireless:
+  - //system: [CEROwrt]
+  - //wireless: [CEROwrt, Beatthebloat]
 
 
 //system:
