@@ -1,0 +1,56 @@
+//cerowrt:
+  deps:
+  - //system:
+  - //wireless:
+
+
+//system:
+  vars: [{hostname: "CEROwrt"}]
+  deps:
+  - //uci.set: [system.hostname, {hostname}]
+  cmds:
+  - [uci, commit, system]
+
+
+//wireless:
+  vars: [{ssid_base: "CEROwrt"}, {key: "Beatthebloat"}]
+  deps:
+  - //wireless.iface: [0, [{ssid_base}], {key}]
+  - //wireless.iface: [1, [{ssid_base},-guest], {key}]
+  - //wireless.iface: [3, [{ssid_base},5], {key}]
+  - //wireless.iface: [4, [{ssid_base},-guest5], {key}]
+  cmds:
+  - [uci, commit, wireless]
+
+//wireless.iface:
+  vars: [{iface: "0"}, ssid, key]
+  deps:
+  - //uci.set.wireless: [{iface}, key, {key}]
+  - //uci.set.wireless: [{iface}, ssid, {ssid}]
+  - //uci.set.wireless: [{iface}, encryption, psk2]
+
+//uci.set.wireless:
+  vars: [{iface: "0"}, key, value]
+  deps:
+  - //uci.set: [["wireless.@wifi-iface[",{iface},"].",{key}], {value}]
+
+
+//uci.set:
+  vars: [key, value]
+  cmds:
+  - [uci, set, [{key},=,{value}]]
+
+//uci.commit:
+  vars: [section]
+  cmds:
+  - [uci, commit, {section}]
+
+
+//opkg.up:
+  cmds:
+  - [opkg, update]
+
+//opkg:
+  deps: [//opkg.up]
+  cmds:
+  - [opkg, install, {...}]
