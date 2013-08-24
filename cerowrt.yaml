@@ -2,6 +2,7 @@
   deps:
   - //system: [CEROwrt]
   - //wireless: [CEROwrt, Beatthebloat]
+  - //qos: [100000, 10000]
 
 
 //system:
@@ -33,6 +34,24 @@
   vars: [{iface: "0"}, key, value]
   deps:
   - //uci.set: [["wireless.@wifi-iface[",{iface},"].",{key}], {value}]
+
+
+//qos:
+  vars: [{download: 100000}, {upload: 10000}]
+  deps:
+  - //uci.set.qos: [{download}, {upload}]
+    deps:
+    - //opkg: [qos-scripts]
+  cmds:
+  - [uci, commit, qos]
+
+//uci.set.qos:
+  vars: [download, upload, {iface: "ge00"}]
+  deps:
+  - //uci.set: [[qos.,{iface},.enabled], 1]
+  - //uci.set: [[qos.,{iface},.download], {download}]
+  - //uci.set: [[qos.,{iface},.upload], {upload}]
+
 
 
 //uci.set:
