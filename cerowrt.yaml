@@ -21,20 +21,25 @@
     - //wireless.iface: [1, [{ssid_base},-guest], {key}]
     - //wireless.iface: [3, [{ssid_base},5], {key}]
     - //wireless.iface: [4, [{ssid_base},-guest5], {key}]
-  cmds:
-    - [uci, commit, wireless]
 
 //wireless.iface:
-  vars: [{iface: "0"}, ssid, key]
+  vars: [iface, ssid, key]
   deps:
     - //uci.set.wireless: [{iface}, key, {key}]
     - //uci.set.wireless: [{iface}, ssid, {ssid}]
     - //uci.set.wireless: [{iface}, encryption, psk2]
 
 //uci.set.wireless:
-  vars: [{iface: "0"}, key, value]
+  vars: [iface, key, value]
   deps:
-    - //uci.set: [["wireless.@wifi-iface[",{iface},"].",{key}], {value}]
+    - //network.reload: []
+      deps:
+        - //uci.set: [["wireless.@wifi-iface[",{iface},"].",{key}], {value}]
+
+//network.reload:
+  cmds:
+    - [uci, commit, wireless]
+    - [/etc/init.d/network, reload]
 
 
 //qos:
