@@ -8,9 +8,10 @@
 //system:
   vars: [{hostname: "CEROwrt"}]
   deps:
-    - //uci.set: [system.@system[0].hostname, {hostname}]
+    - //uci.set: ["system.@system[0].hostname", {hostname}]
   cmds:
     - [uci, commit, system]
+    - [hostname, {hostname}]
 
 
 //wireless:
