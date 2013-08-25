@@ -16,60 +16,60 @@
 //wireless:
   vars: [{ssid_base: "CEROwrt"}, {key: "Beatthebloat"}]
   deps:
-  - //wireless.iface: [0, [{ssid_base}], {key}]
-  - //wireless.iface: [1, [{ssid_base},-guest], {key}]
-  - //wireless.iface: [3, [{ssid_base},5], {key}]
-  - //wireless.iface: [4, [{ssid_base},-guest5], {key}]
+    - //wireless.iface: [0, [{ssid_base}], {key}]
+    - //wireless.iface: [1, [{ssid_base},-guest], {key}]
+    - //wireless.iface: [3, [{ssid_base},5], {key}]
+    - //wireless.iface: [4, [{ssid_base},-guest5], {key}]
   cmds:
-  - [uci, commit, wireless]
+    - [uci, commit, wireless]
 
 //wireless.iface:
   vars: [{iface: "0"}, ssid, key]
   deps:
-  - //uci.set.wireless: [{iface}, key, {key}]
-  - //uci.set.wireless: [{iface}, ssid, {ssid}]
-  - //uci.set.wireless: [{iface}, encryption, psk2]
+    - //uci.set.wireless: [{iface}, key, {key}]
+    - //uci.set.wireless: [{iface}, ssid, {ssid}]
+    - //uci.set.wireless: [{iface}, encryption, psk2]
 
 //uci.set.wireless:
   vars: [{iface: "0"}, key, value]
   deps:
-  - //uci.set: [["wireless.@wifi-iface[",{iface},"].",{key}], {value}]
+    - //uci.set: [["wireless.@wifi-iface[",{iface},"].",{key}], {value}]
 
 
 //qos:
   vars: [{download: 100000}, {upload: 10000}]
   deps:
-  - //uci.set.qos: [{download}, {upload}]
-    deps:
-    - //opkg: [qos-scripts]
+    - //uci.set.qos: [{download}, {upload}]
+      deps:
+        - //opkg: [qos-scripts]
   cmds:
-  - [uci, commit, qos]
+    - [uci, commit, qos]
 
 //uci.set.qos:
   vars: [download, upload, {iface: "ge00"}]
   deps:
-  - //uci.set: [[qos.,{iface},.enabled], 1]
-  - //uci.set: [[qos.,{iface},.download], {download}]
-  - //uci.set: [[qos.,{iface},.upload], {upload}]
+    - //uci.set: [[qos.,{iface},.enabled], 1]
+    - //uci.set: [[qos.,{iface},.download], {download}]
+    - //uci.set: [[qos.,{iface},.upload], {upload}]
 
 
 
 //uci.set:
   vars: [key, value]
   cmds:
-  - [uci, set, [{key},=,{value}]]
+    - [uci, set, [{key},=,{value}]]
 
 //uci.commit:
   vars: [section]
   cmds:
-  - [uci, commit, {section}]
+    - [uci, commit, {section}]
 
 
 //opkg.up:
   cmds:
-  - [opkg, update]
+    - [opkg, update]
 
 //opkg:
   deps: [//opkg.up]
   cmds:
-  - [opkg, install, {...}]
+    - [opkg, install, {...}]
