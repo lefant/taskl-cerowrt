@@ -50,6 +50,7 @@
         - //opkg: [qos-scripts]
   cmds:
     - [uci, commit, qos]
+    - [/etc/init.d/qos, restart]
 
 //uci.set.qos:
   vars: [download, upload, {iface: "ge00"}]
